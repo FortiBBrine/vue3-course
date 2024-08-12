@@ -1,25 +1,38 @@
 <template>
-  <div>
-    <div class="post" v-for="post in posts">
-      <div><strong>Название:</strong> {{ post.title }}</div>
-      <div><strong>Описание:</strong> {{ post.body }}</div>
-    </div>
+  <div class = "app">
+    <post-form
+        @create="createPost"
+    />
+<!--    <post-list v-bind:posts="posts"/>-->
+    <post-list
+        :posts="posts"
+    />
+
   </div>
 </template>
 
 <script>
+import PostForm from "@/components/PostForm";
+import PostList from "@/components/PostList";
+
 export default {
+  components: {
+      PostList, PostForm
+  },
   data() {
     return {
       posts: [
         {id: 1, title: 'JavaScript', body: 'Описание поста'},
         {id: 2, title: 'JavaScript 2', body: 'Описание поста 2'},
         {id: 3, title: 'JavaScript 3', body: 'Описание поста 3'},
-      ]
+        {id: 4, title: 'JavaScript 4', body: 'Описание поста 4'},
+      ],
     }
   },
   methods: {
-
+    createPost(post) {
+      this.posts.push(post);
+    },
   }
 }
 </script>
@@ -30,9 +43,8 @@ export default {
   padding: 0;
   box-sizing: border-box;
 }
-.post {
-  padding: 15px;
-  border: 2px solid teal;
-  margin-top: 15px;
+.app {
+  padding: 20px;
 }
+
 </style>
