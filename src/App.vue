@@ -1,12 +1,18 @@
 <template>
   <div class = "app">
     <h1>Страница с постами</h1>
-    <my-button
-      @click="showDialog"
-      style="margin: 15px 0;"
-    >
-      Создать пост
-    </my-button>
+    <div class="app__btns">
+      <my-button
+          @click="showDialog"
+      >
+        Создать пост
+      </my-button>
+      <my-select
+        v-model="selectedSort"
+        :options="sortOptions"
+      />
+    </div>
+
     <my-dialog v-model:show="dialogVisible">
       <post-form
           @create="createPost"
@@ -14,7 +20,7 @@
     </my-dialog>
 <!--    <post-list v-bind:posts="posts"/>-->
     <post-list
-        :posts="posts"
+        :posts="sortedPosts"
         @remove="removePost"
         v-if="!isPostsLoading"
     />
@@ -29,9 +35,11 @@ import PostForm from "@/components/PostForm";
 import PostList from "@/components/PostList";
 import MyButton from "@/components/UI/MyButton.vue";
 import axios from "axios";
+import MySelect from "@/components/UI/MySelect.vue";
 
 export default {
   components: {
+    MySelect,
     MyButton,
       PostList, PostForm
   },
@@ -39,7 +47,12 @@ export default {
     return {
       posts: [],
       dialogVisible: false,
-      isPostsLoading: false
+      isPostsLoading: false,
+      selectedSort: '',
+      sortOptions: [
+          {value: 'title', name: 'По названию'},
+          {value: 'body', name: 'По описанию'},
+      ]
     }
   },
   methods: {
@@ -69,6 +82,30 @@ export default {
   // IT'S HOOK BRO
   mounted() {
     this.fetchPosts()
+  },
+  // watch vs computed
+  // computed - cashing information
+  watch: {
+    // selectedSort(newValue) {
+    //   this.posts.sort((post1, post2) => {
+    //     return post1[newValue]?.localeCompare(post2[newValue]);
+    //   })
+    // },
+    // FOR OBJECTS
+    //
+    // post: {
+    //   handler(newValue) {
+    //
+    //   },
+    //   deep: true
+    // }
+  },
+  computed: {
+    sortedPosts() {
+      return [...this.posts].sort((post1, post2) => {
+        return post1[this.selectedSort]?.localeCompare(post2[this.selectedSort])
+      })
+    }
   }
 }
 </script>
@@ -82,5 +119,9 @@ export default {
 .app {
   padding: 20px;
 }
-
+.app__btns {
+  display: flex;
+  justify-content: space-between;
+  margin: 15px 0;
+}
 </style>
