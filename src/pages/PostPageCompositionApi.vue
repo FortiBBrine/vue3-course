@@ -8,7 +8,6 @@
     />
     <div class="app__btns">
       <my-button
-          @click="showDialog"
       >
         Создать пост
       </my-button>
@@ -20,19 +19,17 @@
 
     <my-dialog v-model:show="dialogVisible">
       <post-form
-          @create="createPost"
       />
     </my-dialog>
     <!--    <post-list v-bind:posts="posts"/>-->
     <post-list
         :posts="sortedAndSearchedPosts"
-        @remove="removePost"
         v-if="!isPostsLoading"
     />
     <div v-else>
       Идёт загрузка
     </div>
-    <div v-intersection="loadMorePosts" class="observer" />
+<!--    <div v-intersection="loadMorePosts" class="observer" />-->
   </div>
 </template>
 
@@ -44,6 +41,9 @@ import axios from "axios";
 import MySelect from "@/components/UI/MySelect.vue";
 import MyInput from "@/components/UI/MyInput.vue";
 import {ref} from "vue";
+import {usePosts} from "@/hooks/usePosts";
+import {useSortedPosts} from "@/hooks/useSortedPosts";
+import {useSortedAndSearchedPosts} from "@/hooks/useSortedAndSearchedPosts";
 
 export default {
   components: {
@@ -63,6 +63,19 @@ export default {
     }
   },
   setup(props) {
+    const {totalPages, posts, isPostsLoading} = usePosts(10)
+    const {sortedPosts, selectedSort} = useSortedPosts(posts)
+    const {searchQuery, sortedAndSearchedPosts} = useSortedAndSearchedPosts(sortedPosts)
+
+    return {
+      posts,
+      totalPages,
+      isPostsLoading,
+      sortedPosts,
+      selectedSort,
+      searchQuery,
+      sortedAndSearchedPosts,
+    }
   }
 }
 </script>
